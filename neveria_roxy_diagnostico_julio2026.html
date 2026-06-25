@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico Nevería Roxy — Julio 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --neon-start: #fe663d;
+    --neon-end: #ff3d55;
+    --beige: #fff0dd;
+    --blue-pastel: #d9f1ff;
+    --pink-pastel: #f4dff6;
+    --purple-pastel: #e5dcff;
+    --turbo-green: #eafce6;
+    --turbo-dark: #083410;
+    --dark-text: #1a1a1a;
+    --gray: #6b7280;
+    --white: #ffffff;
+    --semaforo-verde: #083410;
+    --semaforo-amarillo: #fe663d;
+    --semaforo-rojo: #ff3d55;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Nunito', sans-serif; background: #f5f5f5; color: var(--dark-text); }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--neon-start) 0%, var(--neon-end) 100%);
+    padding: 36px 48px 28px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .brand-pill {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .date-badge {
+    font-size: 12px;
+    opacity: 0.85;
+    font-weight: 600;
+    text-align: right;
+  }
+  .header h1 {
+    font-size: 36px;
+    font-weight: 900;
+    margin-top: 16px;
+    line-height: 1.15;
+  }
+  .header h2 { font-size: 16px; font-weight: 400; opacity: 0.85; margin-top: 4px; }
+  .header-pills { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .header-pill {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
+    padding: 3px 12px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  /* NAV TABS */
+  .nav-tabs {
+    background: white;
+    padding: 0 48px;
+    display: flex;
+    gap: 4px;
+    border-bottom: 2px solid #f0f0f0;
+    overflow-x: auto;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .nav-tab {
+    padding: 14px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    color: var(--gray);
+    transition: all 0.2s;
+    background: none;
+    border-top: none; border-left: none; border-right: none;
+  }
+  .nav-tab:hover { color: var(--neon-start); }
+  .nav-tab.active {
+    color: var(--neon-end);
+    border-bottom-color: var(--neon-end);
+  }
+
+  /* SECTIONS */
+  .section { display: none; padding: 32px 48px 48px; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--dark-text);
+    margin-bottom: 6px;
+  }
+  .section-sub { font-size: 14px; color: var(--gray); margin-bottom: 28px; }
+
+  /* KPI CARDS */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .kpi-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border-left: 4px solid var(--neon-start);
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card.verde { border-left-color: #16a34a; }
+  .kpi-card.amarillo { border-left-color: var(--neon-start); }
+  .kpi-card.rojo { border-left-color: var(--neon-end); }
+  .kpi-label { font-size: 11px; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 0.8px; }
+  .kpi-value { font-size: 30px; font-weight: 900; margin: 6px 0 4px; color: var(--dark-text); }
+  .kpi-value.small { font-size: 22px; }
+  .kpi-delta { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; border-radius: 8px; padding: 3px 8px; }
+  .kpi-delta.pos { background: #dcfce7; color: #16a34a; }
+  .kpi-delta.neg { background: #fee2e2; color: #dc2626; }
+  .kpi-delta.neu { background: #f3f4f6; color: #6b7280; }
+  .kpi-context { font-size: 11px; color: var(--gray); margin-top: 6px; }
+
+  /* COMPARISON TABLE */
+  .comp-table { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 28px; }
+  .comp-table table { width: 100%; border-collapse: collapse; }
+  .comp-table th {
+    background: linear-gradient(135deg, var(--neon-start), var(--neon-end));
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 14px 18px;
+    text-align: left;
+  }
+  .comp-table td { padding: 13px 18px; font-size: 13px; border-bottom: 1px solid #f5f5f5; }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table tr:hover td { background: #fafafa; }
+  .comp-table .metric-name { font-weight: 700; color: var(--dark-text); }
+  .pill-neg { background: #fee2e2; color: #dc2626; padding: 3px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+  .pill-pos { background: #dcfce7; color: #16a34a; padding: 3px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+  .pill-neu { background: #f3f4f6; color: #6b7280; padding: 3px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+
+  /* CHARTS */
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+  .chart-box {
+    background: white;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .chart-box.full { grid-column: 1 / -1; }
+  .chart-title { font-size: 14px; font-weight: 800; color: var(--dark-text); margin-bottom: 4px; }
+  .chart-sub { font-size: 11px; color: var(--gray); margin-bottom: 16px; }
+  .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; }
+  .bar-label { font-size: 11px; font-weight: 700; width: 58px; text-align: right; color: var(--gray); flex-shrink: 0; }
+  .bar-track { flex: 1; background: #f3f4f6; border-radius: 6px; height: 28px; position: relative; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 8px; font-size: 11px; font-weight: 700; color: white; transition: width 0.8s ease; white-space: nowrap; min-width: 30px; }
+  .bar-fill.gradient { background: linear-gradient(90deg, var(--neon-start), var(--neon-end)); }
+  .bar-fill.teal { background: linear-gradient(90deg, #0ea5e9, #0891b2); }
+  .bar-fill.purple { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+  .bar-fill.green { background: linear-gradient(90deg, #16a34a, #15803d); }
+  .bar-fill.gray { background: #d1d5db; color: #6b7280; }
+
+  /* SEMAFORO */
+  .semaforo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .semaforo-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .semaforo-dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .semaforo-dot.verde { background: #16a34a; box-shadow: 0 0 8px rgba(22,163,74,0.4); }
+  .semaforo-dot.amarillo { background: var(--neon-start); box-shadow: 0 0 8px rgba(254,102,61,0.4); }
+  .semaforo-dot.rojo { background: var(--neon-end); box-shadow: 0 0 8px rgba(255,61,85,0.4); }
+  .semaforo-text h4 { font-size: 13px; font-weight: 800; color: var(--dark-text); margin-bottom: 4px; }
+  .semaforo-text p { font-size: 12px; color: var(--gray); line-height: 1.5; }
+
+  /* STORES TABLE */
+  .stores-wrap { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 28px; }
+  .stores-wrap table { width: 100%; border-collapse: collapse; }
+  .stores-wrap th { background: #1a1a1a; color: white; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 13px 16px; text-align: left; }
+  .stores-wrap td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid #f5f5f5; }
+  .stores-wrap tr:last-child td { border-bottom: none; }
+  .stores-wrap tr:hover td { background: #fafafa; }
+  .rank-badge { width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: white; }
+  .rank-1 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .rank-2 { background: #9ca3af; }
+  .rank-3 { background: #92400e; }
+  .rank-n { background: #e5e7eb; color: #6b7280; }
+
+  /* LEVERS */
+  .levers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 28px; }
+  .lever-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border-top: 4px solid;
+  }
+  .lever-card.palanca-1 { border-top-color: var(--neon-end); }
+  .lever-card.palanca-2 { border-top-color: #8b5cf6; }
+  .lever-card.palanca-3 { border-top-color: #0ea5e9; }
+  .lever-card.palanca-4 { border-top-color: #16a34a; }
+  .lever-card.palanca-5 { border-top-color: #f59e0b; }
+  .lever-num { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .lever-title { font-size: 16px; font-weight: 900; color: var(--dark-text); margin-bottom: 8px; }
+  .lever-why { font-size: 12px; color: var(--gray); margin-bottom: 12px; line-height: 1.6; }
+  .lever-actions { display: flex; flex-direction: column; gap: 6px; }
+  .lever-action { display: flex; gap: 8px; font-size: 12px; align-items: flex-start; }
+  .lever-action span.bullet {
+    width: 18px; height: 18px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 900; flex-shrink: 0; margin-top: 1px;
+    background: linear-gradient(135deg, var(--neon-start), var(--neon-end));
+    color: white;
+  }
+  .lever-impact { display: flex; align-items: center; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #f0f0f0; }
+  .lever-impact-label { font-size: 10px; font-weight: 700; color: var(--gray); text-transform: uppercase; }
+  .impact-stars { display: flex; gap: 3px; }
+  .star { width: 10px; height: 10px; background: #e5e7eb; border-radius: 2px; }
+  .star.on { background: linear-gradient(135deg, var(--neon-start), var(--neon-end)); }
+
+  /* SEASONALITY */
+  .season-wrap { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 28px; }
+  .season-bars { display: flex; align-items: flex-end; gap: 8px; height: 140px; margin-top: 16px; }
+  .s-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .s-bar { width: 100%; border-radius: 6px 6px 0 0; position: relative; transition: height 0.8s ease; cursor: default; }
+  .s-bar:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 105%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  .s-label { font-size: 10px; font-weight: 700; color: var(--gray); text-align: center; }
+
+  /* INSIGHT BOX */
+  .insight-box {
+    background: linear-gradient(135deg, #fff0dd, #fff8f0);
+    border: 1.5px solid #fed7aa;
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .insight-icon { font-size: 22px; flex-shrink: 0; }
+  .insight-content h4 { font-size: 14px; font-weight: 800; color: #92400e; margin-bottom: 4px; }
+  .insight-content p { font-size: 13px; color: #78350f; line-height: 1.6; }
+
+  .alert-box {
+    background: linear-gradient(135deg, #fee2e2, #fff5f5);
+    border: 1.5px solid #fca5a5;
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .alert-box .insight-content h4 { color: #991b1b; }
+  .alert-box .insight-content p { color: #7f1d1d; }
+
+  .success-box {
+    background: linear-gradient(135deg, #dcfce7, #f0fdf4);
+    border: 1.5px solid #86efac;
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .success-box .insight-content h4 { color: #14532d; }
+  .success-box .insight-content p { color: #15803d; }
+
+  /* LINE CHART SVG */
+  .line-chart-wrap { position: relative; overflow: hidden; }
+
+  /* STORYTELLING */
+  .story-timeline { position: relative; padding-left: 28px; }
+  .story-timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--neon-start), var(--neon-end)); }
+  .story-item { margin-bottom: 24px; position: relative; }
+  .story-dot {
+    position: absolute;
+    left: -24px; top: 4px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+  .story-dot.red { background: var(--neon-end); }
+  .story-dot.orange { background: var(--neon-start); }
+  .story-dot.green { background: #16a34a; }
+  .story-dot.purple { background: #8b5cf6; }
+  .story-item h4 { font-size: 14px; font-weight: 800; color: var(--dark-text); margin-bottom: 4px; }
+  .story-item p { font-size: 13px; color: var(--gray); line-height: 1.6; }
+
+  /* FOOTER */
+  .footer {
+    background: #1a1a1a;
+    color: white;
+    padding: 20px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    opacity: 0.9;
+  }
+  .footer span { opacity: 0.6; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .header, .nav-tabs, .section { padding-left: 20px; padding-right: 20px; }
+    .chart-row { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .header h1 { font-size: 26px; }
+    .levers-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="brand-pill">🍦 Nevería Roxy × Rappi MX</div>
+    <div class="date-badge">Diagnóstico Comercial<br>Preparado Jun 2026</div>
+  </div>
+  <h1>Business Review<br>Nevería Roxy</h1>
+  <h2>Análisis de tendencia · Palancas para Julio 2026</h2>
+  <div class="header-pills">
+    <span class="header-pill">9 Tiendas activas</span>
+    <span class="header-pill">MoM · YoY · YTD</span>
+    <span class="header-pill">2 Turbo stores</span>
+    <span class="header-pill">Ene 2025 → Jun 2026</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showSection('resumen')">📊 Resumen Ejecutivo</button>
+  <button class="nav-tab" onclick="showSection('kpis')">📈 KPIs Comparativos</button>
+  <button class="nav-tab" onclick="showSection('tiendas')">🏪 Por Tienda</button>
+  <button class="nav-tab" onclick="showSection('tendencia')">📉 Tendencia</button>
+  <button class="nav-tab" onclick="showSection('palancas')">🚀 Palancas Jul 2026</button>
+  <button class="nav-tab" onclick="showSection('storytelling')">📖 Story para Aliado</button>
+  <button class="nav-tab" onclick="showSection('benchmark')">🏆 Benchmark Mercado</button>
+</div>
+
+<!-- ======================== SECCIÓN 1: RESUMEN ======================== -->
+<div id="resumen" class="section active">
+  <div class="section-title">📊 Resumen Ejecutivo</div>
+  <div class="section-sub">Snapshot actual del negocio · Junio 2026</div>
+
+  <div class="alert-box">
+    <span class="insight-icon">🚨</span>
+    <div class="insight-content">
+      <h4>Señal de alerta: Caída sostenida YoY y YTD — pero el mercado sigue creciendo</h4>
+      <p>Nevería Roxy acumula una contracción de <strong>-32.1% en Órdenes</strong> y <strong>-30.6% en Ventas</strong> en lo que va del año vs. 2025. Mientras tanto, el mercado de Helados & Nieves procesó <strong>+77,949 órdenes solo en Mayo 2026</strong>. Roxy tiene apenas el <strong>0.68% de market share en órdenes</strong> — con el mejor CVR (#2) y el mejor AOV (#1) de las marcas comparables. El negocio mantiene su estacionalidad (pico en Mayo), pero el baseline se está deteriorando ciclo a ciclo mientras el mercado no. Hay que actuar antes de entrar al H2.</p>
+    </div>
+  </div>
+
+  <!-- KPIs Jun 2026 -->
+  <div class="kpi-grid">
+    <div class="kpi-card rojo">
+      <div class="kpi-label">Órdenes · Jun 2026</div>
+      <div class="kpi-value">776</div>
+      <span class="kpi-delta neg">▼ -35.6% YoY</span>
+      <div class="kpi-context">Jun 2025: 1,205 órdenes</div>
+    </div>
+    <div class="kpi-card rojo">
+      <div class="kpi-label">Ventas · Jun 2026</div>
+      <div class="kpi-value small">$328,758</div>
+      <span class="kpi-delta neg">▼ -36.2% YoY</span>
+      <div class="kpi-context">Jun 2025: $515,695</div>
+    </div>
+    <div class="kpi-card rojo">
+      <div class="kpi-label">Tráfico · Jun 2026</div>
+      <div class="kpi-value">2,674</div>
+      <span class="kpi-delta neg">▼ -55.4% YoY</span>
+      <div class="kpi-context">Jun 2025: 5,989 usuarios</div>
+    </div>
+    <div class="kpi-card verde">
+      <div class="kpi-label">CVR · Jun 2026</div>
+      <div class="kpi-value">28.0%</div>
+      <span class="kpi-delta pos">▲ +8.3pp YoY</span>
+      <div class="kpi-context">Jun 2025: 19.7% — Quien entra, compra más</div>
+    </div>
+    <div class="kpi-card verde">
+      <div class="kpi-label">AOV · Jun 2026</div>
+      <div class="kpi-value">$335</div>
+      <span class="kpi-delta pos">▲ +12.0% YoY</span>
+      <div class="kpi-context">Jun 2025: $299 por orden</div>
+    </div>
+    <div class="kpi-card amarillo">
+      <div class="kpi-label">Burn Rappi · Jun 2026</div>
+      <div class="kpi-value small">$774</div>
+      <span class="kpi-delta neg">▼ -21.8% YoY</span>
+      <div class="kpi-context">YTD 2026: +60.3% vs YTD 2025</div>
+    </div>
+    <div class="kpi-card amarillo">
+      <div class="kpi-label">Market Share Órdenes · Jun26</div>
+      <div class="kpi-value">0.68%</div>
+      <span class="kpi-delta neg">▼ vs 0.88% Abr26</span>
+      <div class="kpi-context">Mercado: 59,667 órdenes en Jun</div>
+    </div>
+  </div>
+
+  <div class="success-box">
+    <span class="insight-icon">✅</span>
+    <div class="insight-content">
+      <h4>Punto brillante: CVR #2 y AOV #1 del mercado — El problema es tráfico, no producto</h4>
+      <p>La tienda no tiene problema de conversión (28.9% vs 14.5% promedio de mercado — <strong>2x el mercado</strong>) ni de ticket promedio ($427 vs $207 mercado — también 2x). Con solo 0.35% del tráfico total del mercado, Roxy genera 1.34% de las ventas. <strong>Si recuperamos tráfico, el impacto se multiplica.</strong> Con la CVR actual, cada 1,000 usuarios adicionales = ~289 órdenes más y ~$123K de ventas.</p>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <span class="insight-icon">📅</span>
+    <div class="insight-content">
+      <h4>Contexto estacional: Estamos entrando al peor trimestre del año</h4>
+      <p>Históricamente (2025), Agosto representó solo el 29% del volumen de Mayo. Si no se activa correctamente Julio, se entra al H2 con una base muy deteriorada. <strong>Julio es el último mes de verano con calor — temporada natural de neverías — y hay que capitalizarlo.</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECCIÓN 2: KPIs COMPARATIVOS ======================== -->
+<div id="kpis" class="section">
+  <div class="section-title">📈 KPIs Comparativos</div>
+  <div class="section-sub">MoM · YoY · YTD homologados</div>
+
+  <!-- MOM TABLE -->
+  <div class="comp-table" style="margin-bottom:20px">
+    <table>
+      <thead>
+        <tr>
+          <th>KPI</th>
+          <th>Mayo 2026</th>
+          <th>Junio 2026</th>
+          <th>MoM (May→Jun)</th>
+          <th>Contexto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="metric-name">🛒 Órdenes</td>
+          <td>1,118</td>
+          <td>776</td>
+          <td><span class="pill-neg">▼ -30.6%</span></td>
+          <td style="font-size:11px;color:#6b7280">Caída estacional esperada post-Mayo</td>
+        </tr>
+        <tr>
+          <td class="metric-name">💰 Ventas</td>
+          <td>$478,589</td>
+          <td>$328,758</td>
+          <td><span class="pill-neg">▼ -31.3%</span></td>
+          <td style="font-size:11px;color:#6b7280">En línea con la caída de órdenes</td>
+        </tr>
+        <tr>
+          <td class="metric-name">👥 Tráfico</td>
+          <td>3,813</td>
+          <td>2,674</td>
+          <td><span class="pill-neg">▼ -29.9%</span></td>
+          <td style="font-size:11px;color:#6b7280">Menor visibilidad en plataforma</td>
+        </tr>
+        <tr>
+          <td class="metric-name">🎯 CVR</td>
+          <td>25.1%</td>
+          <td>28.0%</td>
+          <td><span class="pill-pos">▲ +2.9pp</span></td>
+          <td style="font-size:11px;color:#6b7280">Menú y oferta bien configurados</td>
+        </tr>
+        <tr>
+          <td class="metric-name">🧾 AOV</td>
+          <td>$316</td>
+          <td>$335</td>
+          <td><span class="pill-pos">▲ +5.9%</span></td>
+          <td style="font-size:11px;color:#6b7280">Ticket promedio en alza</td>
+        </tr>
+        <tr>
+          <td class="metric-name">🔥 Burn Rappi</td>
+          <td>$2,494</td>
+          <td>$774</td>
+          <td><span class="pill-neg">▼ -69.0%</span></td>
+          <td style="font-size:11px;color:#6b7280">Menor inversión en Junio</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- YOY TABLE -->
+  <div class="comp-table" style="margin-bottom:20px">
+    <table>
+      <thead>
+        <tr>
+          <th>KPI</th>
+          <th>Jun 2025</th>
+          <th>Jun 2026</th>
+          <th>YoY</th>
+          <th>Señal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="metric-name">🛒 Órdenes</td>
+          <td>1,205</td>
+          <td>776</td>
+          <td><span class="pill-neg">▼ -35.6%</span></td>
+          <td style="font-size:11px;color:#dc2626">⚠ Alerta crítica</td>
+        </tr>
+        <tr>
+          <td class="metric-name">💰 Ventas</td>
+          <td>$515,695</td>
+          <td>$328,758</td>
+          <td><span class="pill-neg">▼ -36.2%</span></td>
+          <td style="font-size:11px;color:#dc2626">⚠ Alerta crítica</td>
+        </tr>
+        <tr>
+          <td class="metric-name">👥 Tráfico</td>
+          <td>5,989</td>
+          <td>2,674</td>
+          <td><span class="pill-neg">▼ -55.4%</span></td>
+          <td style="font-size:11px;color:#dc2626">⚠ Señal más preocupante</td>
+        </tr>
+        <tr>
+          <td class="metric-name">🎯 CVR</td>
+          <td>19.7%</td>
+          <td>28.0%</td>
+          <td><span class="pill-pos">▲ +8.3pp</span></td>
+          <td style="font-size:11px;color:#16a34a">✅ Fortaleza</td>
+        </tr>
+        <tr>
+          <td class="metric-name">🧾 AOV</td>
+          <td>$299</td>
+          <td>$335</td>
+          <td><span class="pill-pos">▲ +12.0%</span></td>
+          <td style="font-size:11px;color:#16a34a">✅ Fortaleza</td>
+        </tr>
+        <tr>
+          <td class="metric-name">🔥 Burn Rappi</td>
+          <td>$990</td>
+          <td>$774</td>
+          <td><span class="pill-neg">▼ -21.8%</span></td>
+          <td style="font-size:11px;color:#d97706">⚡ Invertir más en Julio</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- YTD TABLE -->
+  <div class="comp-table">
+    <table>
+      <thead>
+        <tr>
+          <th>KPI</th>
+          <th>YTD Ene–Jun 2025</th>
+          <th>YTD Ene–Jun 2026</th>
+          <th>YTD %</th>
+          <th>Diagnóstico</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="metric-name">🛒 Órdenes</td>
+          <td>5,864</td>
+          <td>3,984</td>
+          <td><span class="pill-neg">▼ -32.1%</span></td>
+          <td style="font-size:11px;color:#dc2626">1,880 órdenes perdidas</td>
+        </tr>
+        <tr>
+          <td class="metric-name">💰 Ventas</td>
+          <td>$2,382,510</td>
+          <td>$1,652,538</td>
+          <td><span class="pill-neg">▼ -30.6%</span></td>
+          <td style="font-size:11px;color:#dc2626">$730K de ventas perdidas</td>
+        </tr>
+        <tr>
+          <td class="metric-name">👥 Tráfico</td>
+          <td>24,961</td>
+          <td>18,027</td>
+          <td><span class="pill-neg">▼ -27.8%</span></td>
+          <td style="font-size:11px;color:#dc2626">6,934 visitas menos</td>
+        </tr>
+        <tr>
+          <td class="metric-name">🔥 Burn Rappi</td>
+          <td>$6,342</td>
+          <td>$10,166</td>
+          <td><span class="pill-neg">▲ +60.3%</span></td>
+          <td style="font-size:11px;color:#d97706">Mayor inversión, menor retorno</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert-box" style="margin-top:20px">
+    <span class="insight-icon">💡</span>
+    <div class="insight-content">
+      <h4>Lectura clave del Burn: más gasto, menos eficiencia</h4>
+      <p>En Enero 2026, el Burn por Orden fue de <strong>$3.44</strong> — vs <strong>$0.82</strong> en Junio 2025 (cuando el negocio estaba en su mejor momento). Marzo 2026 llegó a <strong>$4.97/orden</strong>. Junio 2026 se recuperó a <strong>$1.00/orden</strong>, lo que indica que el tipo correcto de inversión puede dar resultados. El ROI de Junio 2026 es 424x vs solo 83x en Marzo 2026.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECCIÓN 3: TIENDAS ======================== -->
+<div id="tiendas" class="section">
+  <div class="section-title">🏪 Análisis por Tienda</div>
+  <div class="section-sub">Performance individual · Junio 2026 vs Junio 2025</div>
+
+  <div class="stores-wrap" style="margin-bottom:28px">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Tienda</th>
+          <th>Ventas Jun 2026</th>
+          <th>% del total</th>
+          <th>Órdenes Jun26</th>
+          <th>Órdenes Jun25</th>
+          <th>YoY Órdenes</th>
+          <th>AOV Jun26</th>
+          <th>CVR Jun26</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="rank-badge rank-1">1</span></td>
+          <td style="font-weight:700">Condesa</td>
+          <td>$81,934</td>
+          <td>24.9%</td>
+          <td>216</td>
+          <td>251</td>
+          <td><span class="pill-neg">▼ -13.9%</span></td>
+          <td>$383</td>
+          <td>30.2%</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-2">2</span></td>
+          <td style="font-weight:700">Pedregal</td>
+          <td>$56,430</td>
+          <td>17.2%</td>
+          <td>122</td>
+          <td>181</td>
+          <td><span class="pill-neg">▼ -32.6%</span></td>
+          <td>$421</td>
+          <td>36.3%</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-3">3</span></td>
+          <td style="font-weight:700">Cineteca</td>
+          <td>$53,056</td>
+          <td>16.1%</td>
+          <td>120</td>
+          <td>204</td>
+          <td><span class="pill-neg">▼ -41.2%</span></td>
+          <td>$411</td>
+          <td>25.2%</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">4</span></td>
+          <td style="font-weight:700">Santa Fe</td>
+          <td>$32,889</td>
+          <td>10.0%</td>
+          <td>78</td>
+          <td>116</td>
+          <td><span class="pill-neg">▼ -32.8%</span></td>
+          <td>$327</td>
+          <td>31.2%</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">5</span></td>
+          <td style="font-weight:700">Interlomas</td>
+          <td>$29,420</td>
+          <td>8.9%</td>
+          <td>70</td>
+          <td>79</td>
+          <td><span class="pill-neg">▼ -11.4%</span></td>
+          <td>$296</td>
+          <td>27.8%</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">6</span></td>
+          <td style="font-weight:700">Polanco Turbo ⚡</td>
+          <td>$29,243</td>
+          <td>8.9%</td>
+          <td>74</td>
+          <td>26</td>
+          <td><span class="pill-pos">▲ +184.6%</span></td>
+          <td>$304</td>
+          <td>20.8%</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">7</span></td>
+          <td style="font-weight:700">Lomas</td>
+          <td>$23,964</td>
+          <td>7.3%</td>
+          <td>52</td>
+          <td>125</td>
+          <td><span class="pill-neg">▼ -58.4%</span></td>
+          <td>$327</td>
+          <td>30.6%</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">8</span></td>
+          <td style="font-weight:700">Polanco</td>
+          <td>$17,856</td>
+          <td>5.4%</td>
+          <td>38</td>
+          <td>108</td>
+          <td><span class="pill-neg">▼ -64.8%</span></td>
+          <td>$344</td>
+          <td>36.9%</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">9</span></td>
+          <td style="font-weight:700">Querétaro</td>
+          <td>$3,966</td>
+          <td>1.2%</td>
+          <td>6</td>
+          <td>4</td>
+          <td><span class="pill-pos">▲ +50.0%</span></td>
+          <td>$155</td>
+          <td>9.3%</td>
+        </tr>
+        <tr style="background:#fafafa;">
+          <td></td>
+          <td style="font-weight:900">TOTAL</td>
+          <td style="font-weight:900">$328,758</td>
+          <td style="font-weight:900">100%</td>
+          <td style="font-weight:900">776</td>
+          <td style="font-weight:900">1,205</td>
+          <td><span class="pill-neg">▼ -35.6%</span></td>
+          <td style="font-weight:900">$335</td>
+          <td style="font-weight:900">28.0%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Ventas por tienda bar chart -->
+  <div class="chart-box full">
+    <div class="chart-title">Distribución de Ventas por Tienda · Junio 2026</div>
+    <div class="chart-sub">Condesa + Pedregal + Cineteca = 58.2% del total</div>
+    <div class="bar-chart">
+      <div class="bar-row"><span class="bar-label">Condesa</span><div class="bar-track"><div class="bar-fill gradient" style="width:100%">$81,934 · 24.9%</div></div></div>
+      <div class="bar-row"><span class="bar-label">Pedregal</span><div class="bar-track"><div class="bar-fill gradient" style="width:68.9%">$56,430 · 17.2%</div></div></div>
+      <div class="bar-row"><span class="bar-label">Cineteca</span><div class="bar-track"><div class="bar-fill gradient" style="width:64.8%">$53,056 · 16.1%</div></div></div>
+      <div class="bar-row"><span class="bar-label">Santa Fe</span><div class="bar-track"><div class="bar-fill teal" style="width:40.1%">$32,889 · 10%</div></div></div>
+      <div class="bar-row"><span class="bar-label">Interlomas</span><div class="bar-track"><div class="bar-fill teal" style="width:35.9%">$29,420 · 8.9%</div></div></div>
+      <div class="bar-row"><span class="bar-label">P.Turbo⚡</span><div class="bar-track"><div class="bar-fill purple" style="width:35.7%">$29,243 · 8.9%</div></div></div>
+      <div class="bar-row"><span class="bar-label">Lomas</span><div class="bar-track"><div class="bar-fill gray" style="width:29.2%">$23,964 · 7.3%</div></div></div>
+      <div class="bar-row"><span class="bar-label">Polanco</span><div class="bar-track"><div class="bar-fill gray" style="width:21.8%">$17,856 · 5.4%</div></div></div>
+    </div>
+  </div>
+
+  <div class="insight-box" style="margin-top:20px">
+    <span class="insight-icon">⚡</span>
+    <div class="insight-content">
+      <h4>Turbo Polanco: la única tienda que creció (+184.6% YoY)</h4>
+      <p>Polanco Turbo pasó de 26 a 74 órdenes en Junio. Condesa Turbo desapareció del reporte de Junio 2026 (0 órdenes vs 111 en Jun 2025). Lomas (-58.4%) y Polanco Regular (-64.8%) son las caídas más pronunciadas — posible problema de visibilidad o cobertura de zonas.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECCIÓN 4: TENDENCIA ======================== -->
+<div id="tendencia" class="section">
+  <div class="section-title">📉 Análisis de Tendencia</div>
+  <div class="section-sub">Evolución mensual Enero 2025 → Junio 2026</div>
+
+  <!-- Seasonality bar chart -->
+  <div class="season-wrap">
+    <div class="chart-title">Órdenes Mensuales — Curva de Estacionalidad</div>
+    <div class="chart-sub">2025 (azul) vs 2026 (naranja) · Pico natural = Mayo por calor de verano</div>
+    <div style="overflow-x:auto">
+      <div style="min-width:700px">
+        <div style="display:flex; gap:4px; align-items:flex-end; height:180px; padding:0 8px; margin-top:16px;">
+          <!-- 2025 bars -->
+          <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+            <div style="height:${Math.round(556/1602*160)}px" class="s-bar" style="background:#d9f1ff;width:100%;border-radius:4px 4px 0 0;min-height:4px"></div>
+            <div style="font-size:9px;color:#6b7280;margin-top:4px">Ene25</div>
+          </div>
+        </div>
+
+        <!-- Using SVG for proper bars -->
+        <svg width="100%" height="200" viewBox="0 0 760 200" style="margin-top:0">
+          <!-- Grid lines -->
+          <line x1="0" y1="20" x2="760" y2="20" stroke="#f0f0f0" stroke-width="1"/>
+          <line x1="0" y1="60" x2="760" y2="60" stroke="#f0f0f0" stroke-width="1"/>
+          <line x1="0" y1="100" x2="760" y2="100" stroke="#f0f0f0" stroke-width="1"/>
+          <line x1="0" y1="140" x2="760" y2="140" stroke="#f0f0f0" stroke-width="1"/>
+
+          <!-- Labels Y -->
+          <text x="2" y="18" font-size="8" fill="#9ca3af">1,600</text>
+          <text x="2" y="58" font-size="8" fill="#9ca3af">1,200</text>
+          <text x="2" y="98" font-size="8" fill="#9ca3af">800</text>
+          <text x="2" y="138" font-size="8" fill="#9ca3af">400</text>
+
+          <!-- 2025 bars (blue) - Ene→Dic -->
+          <!-- Ene25: 556 -->
+          <rect x="30" y="116" width="16" height="44" fill="#d9f1ff" stroke="#0ea5e9" stroke-width="1" rx="2"/>
+          <!-- Feb25: 659 -->
+          <rect x="60" y="108" width="16" height="52" fill="#d9f1ff" stroke="#0ea5e9" stroke-width="1" rx="2"/>
+          <!-- Mar25: 965 -->
+          <rect x="90" y="84" width="16" height="76" fill="#d9f1ff" stroke="#0ea5e9" stroke-width="1" rx="2"/>
+          <!-- Abr25: 877 -->
+          <rect x="120" y="91" width="16" height="69" fill="#d9f1ff" stroke="#0ea5e9" stroke-width="1" rx="2"/>
+          <!-- May25: 1602 -->
+          <rect x="150" y="20" width="16" height="140" fill="#0ea5e9" rx="2"/>
+          <!-- Jun25: 1205 -->
+          <rect x="180" y="55" width="16" height="105" fill="#0ea5e9" opacity="0.7" rx="2"/>
+          <!-- Jul25: 1027 -->
+          <rect x="210" y="69" width="16" height="91" fill="#d9f1ff" stroke="#0ea5e9" stroke-width="1" rx="2"/>
+          <!-- Ago25: 466 -->
+          <rect x="240" y="119" width="16" height="41" fill="#d9f1ff" stroke="#0ea5e9" stroke-width="1" rx="2"/>
+          <!-- Sep25: 577 -->
+          <rect x="270" y="109" width="16" height="51" fill="#d9f1ff" stroke="#0ea5e9" stroke-width="1" rx="2"/>
+          <!-- Oct25: 495 -->
+          <rect x="300" y="116" width="16" height="44" fill="#d9f1ff" stroke="#0ea5e9" stroke-width="1" rx="2"/>
+          <!-- Nov25: 431 -->
+          <rect x="330" y="122" width="16" height="38" fill="#d9f1ff" stroke="#0ea5e9" stroke-width="1" rx="2"/>
+          <!-- Dic25: 389 -->
+          <rect x="360" y="126" width="16" height="34" fill="#d9f1ff" stroke="#0ea5e9" stroke-width="1" rx="2"/>
+
+          <!-- 2026 bars (orange) - Ene→Jun -->
+          <!-- Ene26: 416 -->
+          <rect x="395" y="124" width="16" height="36" fill="#fe663d" rx="2"/>
+          <!-- Feb26: 524 -->
+          <rect x="425" y="114" width="16" height="46" fill="#fe663d" rx="2"/>
+          <!-- Mar26: 621 -->
+          <rect x="455" y="106" width="16" height="54" fill="#fe663d" rx="2"/>
+          <!-- Abr26: 529 -->
+          <rect x="485" y="113" width="16" height="47" fill="#fe663d" rx="2"/>
+          <!-- May26: 1118 -->
+          <rect x="515" y="62" width="16" height="98" fill="#ff3d55" rx="2"/>
+          <!-- Jun26: 776 -->
+          <rect x="545" y="92" width="16" height="68" fill="#ff3d55" opacity="0.8" rx="2"/>
+          <!-- Jul26 proyección -->
+          <rect x="575" y="80" width="16" height="80" fill="#ff3d55" opacity="0.3" rx="2" stroke="#ff3d55" stroke-dasharray="3,2"/>
+          <text x="583" y="76" font-size="8" fill="#ff3d55" text-anchor="middle">Est.</text>
+
+          <!-- Month labels -->
+          <text x="38" y="195" font-size="8" fill="#6b7280" text-anchor="middle">E25</text>
+          <text x="68" y="195" font-size="8" fill="#6b7280" text-anchor="middle">F25</text>
+          <text x="98" y="195" font-size="8" fill="#6b7280" text-anchor="middle">M25</text>
+          <text x="128" y="195" font-size="8" fill="#6b7280" text-anchor="middle">A25</text>
+          <text x="158" y="195" font-size="8" fill="#0ea5e9" text-anchor="middle" font-weight="bold">My25</text>
+          <text x="188" y="195" font-size="8" fill="#0ea5e9" text-anchor="middle">J25</text>
+          <text x="218" y="195" font-size="8" fill="#6b7280" text-anchor="middle">Jl25</text>
+          <text x="248" y="195" font-size="8" fill="#6b7280" text-anchor="middle">A25</text>
+          <text x="278" y="195" font-size="8" fill="#6b7280" text-anchor="middle">S25</text>
+          <text x="308" y="195" font-size="8" fill="#6b7280" text-anchor="middle">O25</text>
+          <text x="338" y="195" font-size="8" fill="#6b7280" text-anchor="middle">N25</text>
+          <text x="368" y="195" font-size="8" fill="#6b7280" text-anchor="middle">D25</text>
+          <text x="403" y="195" font-size="8" fill="#fe663d" text-anchor="middle">E26</text>
+          <text x="433" y="195" font-size="8" fill="#fe663d" text-anchor="middle">F26</text>
+          <text x="463" y="195" font-size="8" fill="#fe663d" text-anchor="middle">M26</text>
+          <text x="493" y="195" font-size="8" fill="#fe663d" text-anchor="middle">A26</text>
+          <text x="523" y="195" font-size="8" fill="#ff3d55" text-anchor="middle" font-weight="bold">My26</text>
+          <text x="553" y="195" font-size="8" fill="#ff3d55" text-anchor="middle">J26</text>
+          <text x="583" y="195" font-size="8" fill="#ff3d55" text-anchor="middle">Jl26?</text>
+
+          <!-- Legend -->
+          <rect x="600" y="30" width="12" height="12" fill="#0ea5e9" rx="2"/>
+          <text x="616" y="41" font-size="10" fill="#0ea5e9">2025</text>
+          <rect x="600" y="50" width="12" height="12" fill="#ff3d55" rx="2"/>
+          <text x="616" y="61" font-size="10" fill="#ff3d55">2026</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Traffic vs Orders scatter -->
+  <div class="chart-row">
+    <div class="chart-box">
+      <div class="chart-title">Tráfico Mensual</div>
+      <div class="chart-sub">2025 vs 2026 — La raíz del problema</div>
+      <div class="bar-chart">
+        <div class="bar-row"><span class="bar-label">May 25</span><div class="bar-track"><div class="bar-fill teal" style="width:100%">6,568</div></div></div>
+        <div class="bar-row"><span class="bar-label">Jun 25</span><div class="bar-track"><div class="bar-fill teal" style="width:91.2%">5,989</div></div></div>
+        <div class="bar-row"><span class="bar-label">Jul 25</span><div class="bar-track"><div class="bar-fill teal" style="width:87.2%">5,731</div></div></div>
+        <div class="bar-row"><span class="bar-label">May 26</span><div class="bar-track"><div class="bar-fill gradient" style="width:58.1%">3,813</div></div></div>
+        <div class="bar-row"><span class="bar-label">Jun 26</span><div class="bar-track"><div class="bar-fill gradient" style="width:40.7%">2,674</div></div></div>
+      </div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">CVR & AOV — La Fortaleza</div>
+      <div class="chart-sub">Conversión y ticket van al alza</div>
+      <div style="display:flex;flex-direction:column;gap:16px;margin-top:8px">
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+            <span style="font-weight:700">CVR Jun 25 → Jun 26</span>
+            <span style="color:#16a34a;font-weight:900">19.7% → 28.0%</span>
+          </div>
+          <div style="background:#f3f4f6;border-radius:8px;height:20px;position:relative;overflow:hidden">
+            <div style="width:70.4%;height:100%;background:linear-gradient(90deg,#16a34a,#15803d);border-radius:8px"></div>
+          </div>
+          <div style="font-size:10px;color:#16a34a;margin-top:4px">+8.3 puntos porcentuales YoY ✅</div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+            <span style="font-weight:700">AOV Jun 25 → Jun 26</span>
+            <span style="color:#16a34a;font-weight:900">$299 → $335</span>
+          </div>
+          <div style="background:#f3f4f6;border-radius:8px;height:20px;position:relative;overflow:hidden">
+            <div style="width:84%;height:100%;background:linear-gradient(90deg,#16a34a,#15803d);border-radius:8px"></div>
+          </div>
+          <div style="font-size:10px;color:#16a34a;margin-top:4px">+12.0% YoY ✅</div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+            <span style="font-weight:700">Tráfico Jun 25 → Jun 26</span>
+            <span style="color:#dc2626;font-weight:900">5,989 → 2,674</span>
+          </div>
+          <div style="background:#f3f4f6;border-radius:8px;height:20px;position:relative;overflow:hidden">
+            <div style="width:44.6%;height:100%;background:linear-gradient(90deg,#dc2626,#991b1b);border-radius:8px"></div>
+          </div>
+          <div style="font-size:10px;color:#dc2626;margin-top:4px">-55.4% YoY ⚠️</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <span class="insight-icon">🔍</span>
+    <div class="insight-content">
+      <h4>El diagnóstico en una frase: El negocio sabe vender, pero nadie lo está viendo</h4>
+      <p>Con 28% de CVR (altísimo para la categoría) y un AOV de $335 (+12% YoY), el menú y la propuesta de valor están funcionando. El problema es de <strong>visibilidad y tráfico</strong>: en Junio 2026 llegaron 2,674 usuarios vs 5,989 en Junio 2025. Si recuperamos ese tráfico manteniendo la CVR actual, pasamos de 776 a ~1,677 órdenes — <strong>+116% de órdenes sin cambiar nada del menú.</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECCIÓN 5: PALANCAS ======================== -->
+<div id="palancas" class="section">
+  <div class="section-title">🚀 Palancas para Julio 2026</div>
+  <div class="section-sub">Variables accionables para revertir la tendencia · Priorización por impacto</div>
+
+  <div class="insight-box" style="margin-bottom:24px">
+    <span class="insight-icon">🎯</span>
+    <div class="insight-content">
+      <h4>Objetivo Julio 2026: Recuperar el nivel de Julio 2025 o superarlo</h4>
+      <p>Meta propuesta: <strong>1,100+ órdenes</strong> (vs 776 en Jun26 · vs 1,027 en Jul25) con un Sales target de <strong>~$380,000</strong>. Julio es la última ventana de temporada alta de neverías — el calor de verano es el driver natural de la categoría.</p>
+    </div>
+  </div>
+
+  <div class="levers-grid">
+    <!-- PALANCA 1 -->
+    <div class="lever-card palanca-1">
+      <div class="lever-num" style="color:var(--neon-end)">Palanca #1 · CRÍTICA</div>
+      <div class="lever-title">🚦 Recuperar Tráfico: Visibilidad en Plataforma</div>
+      <div class="lever-why">El tráfico cayó -55.4% YoY. Con la CVR actual (28%), cada 1,000 usuarios adicionales = ~280 órdenes más. Esta es la palanca de mayor impacto multiplicador.</div>
+      <div class="lever-actions">
+        <div class="lever-action"><span class="bullet">1</span><span>Activar Ads en Rappi para las <strong>3 tiendas clave</strong> (Condesa, Pedregal, Cineteca) — representan 58% de ventas</span></div>
+        <div class="lever-action"><span class="bullet">2</span><span>Solicitar <strong>banner de categoría</strong> "Neverías" durante julio — calor de verano</span></div>
+        <div class="lever-action"><span class="bullet">3</span><span>Revisar <strong>cobertura de zona</strong> de Polanco Regular y Lomas (caídas de -64.8% y -58.4%)</span></div>
+        <div class="lever-action"><span class="bullet">4</span><span>Activar <strong>Condesa Turbo</strong> — estuvo 0 órdenes en Jun26 vs 111 en Jun25</span></div>
+      </div>
+      <div class="lever-impact">
+        <span class="lever-impact-label">Impacto potencial</span>
+        <div class="impact-stars"><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star on"></div></div>
+        <span style="font-size:11px;color:var(--neon-end);font-weight:700">Muy Alto</span>
+      </div>
+    </div>
+
+    <!-- PALANCA 2 -->
+    <div class="lever-card palanca-2">
+      <div class="lever-num" style="color:#8b5cf6">Palanca #2 · ALTA</div>
+      <div class="lever-title">🔥 Burn Rappi: Invertir en el Momento Correcto</div>
+      <div class="lever-why">En Junio 2026 el Burn fue solo $774 — el más bajo del año — pero logró el mejor ROI (424x). El ROI de Marzo 2026 fue solo 83x gastando $3,089. La clave no es cuánto, sino cuándo y cómo se invierte.</div>
+      <div class="lever-actions">
+        <div class="lever-action"><span class="bullet">1</span><span>Concentrar Burn en <strong>fines de semana y días de calor</strong> (Vie-Dom en Julio)</span></div>
+        <div class="lever-action"><span class="bullet">2</span><span>Usar Burn en <strong>descuentos de 1er orden</strong> para captar nuevos usuarios vs. descuentos genéricos</span></div>
+        <div class="lever-action"><span class="bullet">3</span><span>Budget sugerido: <strong>$2,500–$3,000</strong> bien distribuidos en Julio</span></div>
+        <div class="lever-action"><span class="bullet">4</span><span>Evitar concentrar Burn en días laborales sin tráfico natural</span></div>
+      </div>
+      <div class="lever-impact">
+        <span class="lever-impact-label">Impacto potencial</span>
+        <div class="impact-stars"><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star"></div></div>
+        <span style="font-size:11px;color:#8b5cf6;font-weight:700">Alto</span>
+      </div>
+    </div>
+
+    <!-- PALANCA 3 -->
+    <div class="lever-card palanca-3">
+      <div class="lever-num" style="color:#0ea5e9">Palanca #3 · ALTA</div>
+      <div class="lever-title">⚡ Potenciar Turbo: El Canal que Sí Creció</div>
+      <div class="lever-why">Polanco Turbo creció +184.6% YoY en Junio. Turbo tiene CVR más alto y captura intención de compra inmediata — perfecto para una nevería en verano donde el impulso es clave.</div>
+      <div class="lever-actions">
+        <div class="lever-action"><span class="bullet">1</span><span>Reactivar <strong>Condesa Turbo</strong> — fue la tienda con más órdenes Turbo en Jun25 (111 órdenes)</span></div>
+        <div class="lever-action"><span class="bullet">2</span><span>Crear un <strong>combo Turbo de verano</strong> — producto estrella con precio de impulso (&lt;$200)</span></div>
+        <div class="lever-action"><span class="bullet">3</span><span>Solicitar <strong>inclusión en carrusel Turbo</strong> de la app durante Julio</span></div>
+        <div class="lever-action"><span class="bullet">4</span><span>Analizar expandir Turbo a <strong>Pedregal y Cineteca</strong> (sus tiendas regulares van bien)</span></div>
+      </div>
+      <div class="lever-impact">
+        <span class="lever-impact-label">Impacto potencial</span>
+        <div class="impact-stars"><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star"></div></div>
+        <span style="font-size:11px;color:#0ea5e9;font-weight:700">Alto</span>
+      </div>
+    </div>
+
+    <!-- PALANCA 4 -->
+    <div class="lever-card palanca-4">
+      <div class="lever-num" style="color:#16a34a">Palanca #4 · MEDIA</div>
+      <div class="lever-title">🧾 Proteger y Aumentar el AOV</div>
+      <div class="lever-why">AOV ya está en $335 (+12% YoY). Si lo subimos a $370–$380, cada orden generaría ~$40 adicionales. Con 1,100 órdenes target = $44,000 de ventas adicionales solo por ticket.</div>
+      <div class="lever-actions">
+        <div class="lever-action"><span class="bullet">1</span><span>Activar <strong>upsell de complementos</strong>: toppings, bebidas, tamaño grande como sugerencia</span></div>
+        <div class="lever-action"><span class="bullet">2</span><span>Crear <strong>combos de verano</strong> (2-3 paletas/helados) a precio de paquete</span></div>
+        <div class="lever-action"><span class="bullet">3</span><span>Configurar <strong>"Productos recomendados"</strong> en Rappi con los artículos de mayor margen</span></div>
+        <div class="lever-action"><span class="bullet">4</span><span>Revisar que Querétaro tenga oferta completa — AOV está en $155 vs $380+ en otras tiendas</span></div>
+      </div>
+      <div class="lever-impact">
+        <span class="lever-impact-label">Impacto potencial</span>
+        <div class="impact-stars"><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star"></div><div class="star"></div></div>
+        <span style="font-size:11px;color:#16a34a;font-weight:700">Medio</span>
+      </div>
+    </div>
+
+    <!-- PALANCA 5 -->
+    <div class="lever-card palanca-5">
+      <div class="lever-num" style="color:#f59e0b">Palanca #5 · MEDIA</div>
+      <div class="lever-title">📸 Menú Visual y Calidad de Contenido</div>
+      <div class="lever-why">La CVR del 28% es buena, pero la caída de tráfico sugiere que la búsqueda orgánica de la marca en plataforma bajó. Un menú actualizado con fotos de verano puede mejorar el click-through rate desde resultados de búsqueda.</div>
+      <div class="lever-actions">
+        <div class="lever-action"><span class="bullet">1</span><span>Actualizar <strong>banner principal</strong> con imágenes veraniegas (colores, sol, frescura)</span></div>
+        <div class="lever-action"><span class="bullet">2</span><span>Asegurar <strong>foto en todos los productos</strong> del menú — los sin foto tienen hasta 40% menos clicks</span></div>
+        <div class="lever-action"><span class="bullet">3</span><span>Crear <strong>una sección "Especiales de Verano"</strong> con los productos estrella de Julio</span></div>
+        <div class="lever-action"><span class="bullet">4</span><span>Verificar que el <strong>horario de operación</strong> sea correcto y amplio en todas las tiendas</span></div>
+      </div>
+      <div class="lever-impact">
+        <span class="lever-impact-label">Impacto potencial</span>
+        <div class="impact-stars"><div class="star on"></div><div class="star on"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+        <span style="font-size:11px;color:#f59e0b;font-weight:700">Medio</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Potencial simulado -->
+  <div class="chart-box full">
+    <div class="chart-title">Simulación de Impacto · Si Activamos las Palancas en Julio</div>
+    <div class="chart-sub">Scenario base vs scenario activado (estimado)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:16px">
+      <div style="text-align:center;padding:20px;background:#f9fafb;border-radius:12px">
+        <div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;margin-bottom:8px">Sin activar</div>
+        <div style="font-size:32px;font-weight:900;color:#dc2626">~750</div>
+        <div style="font-size:11px;color:#6b7280">Órdenes estimadas</div>
+        <div style="font-size:22px;font-weight:900;color:#dc2626;margin-top:8px">~$270K</div>
+        <div style="font-size:11px;color:#6b7280">Ventas estimadas</div>
+      </div>
+      <div style="text-align:center;padding:20px;background:linear-gradient(135deg,#fff0dd,#fff8f0);border-radius:12px;border:2px solid #fed7aa">
+        <div style="font-size:11px;font-weight:700;color:#92400e;text-transform:uppercase;margin-bottom:8px">Palancas 1-3</div>
+        <div style="font-size:32px;font-weight:900;color:#d97706">~1,100</div>
+        <div style="font-size:11px;color:#92400e">Órdenes objetivo</div>
+        <div style="font-size:22px;font-weight:900;color:#d97706;margin-top:8px">~$380K</div>
+        <div style="font-size:11px;color:#92400e">Ventas objetivo</div>
+      </div>
+      <div style="text-align:center;padding:20px;background:linear-gradient(135deg,#fff0dd,#fff5ee);border-radius:12px;border:2px solid var(--neon-end)">
+        <div style="font-size:11px;font-weight:700;color:var(--neon-end);text-transform:uppercase;margin-bottom:8px">Todas las palancas</div>
+        <div style="font-size:32px;font-weight:900;background:linear-gradient(135deg,var(--neon-start),var(--neon-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent">~1,400</div>
+        <div style="font-size:11px;color:#6b7280">Órdenes stretch goal</div>
+        <div style="font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--neon-start),var(--neon-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:8px">~$480K</div>
+        <div style="font-size:11px;color:#6b7280">Ventas stretch (≈ May26)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECCIÓN 6: STORYTELLING ======================== -->
+<div id="storytelling" class="section">
+  <div class="section-title">📖 Story para el Aliado</div>
+  <div class="section-sub">Narrativa recomendada para presentar el diagnóstico a Nevería Roxy · Modo aliado</div>
+
+  <div class="insight-box" style="margin-bottom:28px">
+    <span class="insight-icon">📌</span>
+    <div class="insight-content">
+      <h4>Principio rector del storytelling</h4>
+      <p>El aliado no debe sentir que "está mal" — debe sentir que tiene una <strong>oportunidad enorme que está siendo desaprovechada</strong>. Empieza con sus fortalezas (CVR, AOV), explica el contexto (tráfico cayó, no su menú), y lleva el desenlace a la solución concreta. Tono: <em>El Mago de Rappi</em> — confiable, resolutivo, con datos claros.</p>
+    </div>
+  </div>
+
+  <div style="background:white;border-radius:16px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,0.06)">
+    <div class="story-timeline">
+
+      <div class="story-item">
+        <div class="story-dot green"></div>
+        <h4>🌟 Apertura: Reconocer lo que están haciendo bien</h4>
+        <p>"Nevería Roxy tiene algo que muchos aliados quisieran tener: cuando un usuario entra a su tienda, <strong>casi 3 de cada 10 terminan comprando</strong>. Eso es un CVR de 28% — por encima del promedio de la categoría. Y su ticket promedio subió 12% vs el año pasado. El menú, el surtido, la propuesta de valor — todo eso está funcionando."</p>
+      </div>
+
+      <div class="story-item">
+        <div class="story-dot orange"></div>
+        <h4>📊 El giro: Hay un número que necesitamos hablar</h4>
+        <p>"Sin embargo, hay un dato que nos preocupa y que hay que atender antes de que se vuelva un problema más difícil de revertir: el tráfico a sus tiendas cayó <strong>55% vs el año pasado en Junio</strong>. En Junio 2025 llegaban ~6,000 usuarios a ver su menú. Este Junio llegaron ~2,700. No es que su producto sea peor — es que menos gente los está encontrando."</p>
+      </div>
+
+      <div class="story-item">
+        <div class="story-dot red"></div>
+        <h4>🔍 La causa: Visibilidad, no producto</h4>
+        <p>"El efecto que vemos en órdenes (-35.6% YoY) y ventas (-36.2% YoY) es consecuencia directa de ese tráfico perdido — no de un problema con su menú ni con sus precios. Si recuperamos el tráfico que tenían el año pasado manteniendo la CVR actual, <strong>pasarían de 776 órdenes en Junio a más de 1,600</strong>. El negocio está listo para crecer — le falta audiencia."</p>
+      </div>
+
+      <div class="story-item">
+        <div class="story-dot green"></div>
+        <h4>⚡ La oportunidad: Julio es ahora</h4>
+        <p>"Julio es el último mes de verano — y para una nevería, es el momento en que la demanda orgánica es más alta. El año pasado su pico fue Mayo con 1,600 órdenes. Si activamos bien el mes de Julio, podemos llegar a <strong>1,100+ órdenes</strong> — recuperar el nivel de Julio 2025 y sentar las bases para no repetir la caída del H2."</p>
+      </div>
+
+      <div class="story-item">
+        <div class="story-dot purple"></div>
+        <h4>🚀 La propuesta: Tres cosas concretas</h4>
+        <p>"Para lograrlo, proponemos tres palancas para Julio: <strong>(1) Activar Ads en Rappi</strong> para las tiendas de Condesa, Pedregal y Cineteca — sus tres tiendas más grandes que representan casi el 60% de sus ventas. <strong>(2) Reactivar Condesa Turbo</strong>, que en Junio 2025 generó 111 órdenes y este año estuvo inactivo. <strong>(3) Un Burn Rappi estratégico</strong> de ~$2,500 concentrado en fines de semana, donde el ROI histórico es 4x mayor que entre semana."</p>
+      </div>
+
+      <div class="story-item">
+        <div class="story-dot green"></div>
+        <h4>📈 El cierre: Próximos pasos concretos</h4>
+        <p>"Con estas tres acciones, la proyección es llegar a <strong>~1,100 órdenes y ~$380K de ventas en Julio</strong>. Tenemos todo para que Nevería Roxy termine el verano con fuerza y entre al H2 en una posición mucho mejor. ¿Arrancamos esta semana?"</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Semaforo resumen -->
+  <div style="margin-top:28px">
+    <div class="section-title" style="font-size:18px;margin-bottom:16px">Semáforo de KPIs para el Aliado</div>
+    <div class="semaforo-grid">
+      <div class="semaforo-card">
+        <div class="semaforo-dot verde"></div>
+        <div class="semaforo-text">
+          <h4>Conversión (CVR) · 28.0%</h4>
+          <p>Bien por encima del promedio. El menú convierte. Cada usuario que llega, compra. No hay que tocar esto.</p>
+        </div>
+      </div>
+      <div class="semaforo-card">
+        <div class="semaforo-dot verde"></div>
+        <div class="semaforo-text">
+          <h4>Ticket Promedio (AOV) · $335</h4>
+          <p>Creció 12% YoY. Los combos y productos actuales están funcionando. Hay espacio para llegar a $370–$380 con upsell.</p>
+        </div>
+      </div>
+      <div class="semaforo-card">
+        <div class="semaforo-dot rojo"></div>
+        <div class="semaforo-text">
+          <h4>Tráfico · 2,674 usuarios</h4>
+          <p>Caída de -55.4% YoY. Este es el KPI más crítico. Sin tráfico, la buena CVR no puede hacer su trabajo.</p>
+        </div>
+      </div>
+      <div class="semaforo-card">
+        <div class="semaforo-dot rojo"></div>
+        <div class="semaforo-text">
+          <h4>Órdenes YTD · -32.1% vs 2025</h4>
+          <p>1,880 órdenes menos en lo que va del año. La tendencia necesita revertirse antes del H2.</p>
+        </div>
+      </div>
+      <div class="semaforo-card">
+        <div class="semaforo-dot amarillo"></div>
+        <div class="semaforo-text">
+          <h4>Burn Rappi · ROI 424x en Jun26</h4>
+          <p>Cuando se invierte bien, el ROI es excelente. El problema fue que en Q1 2026 el ROI cayó a 83x por mala distribución del gasto.</p>
+        </div>
+      </div>
+      <div class="semaforo-card">
+        <div class="semaforo-dot verde"></div>
+        <div class="semaforo-text">
+          <h4>Turbo Polanco · +184.6% YoY</h4>
+          <p>El único canal que creció. Señal clara de que Turbo funciona para esta categoría. Hay que replicar el modelo en más tiendas.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECCIÓN 7: BENCHMARK MERCADO ======================== -->
+<div id="benchmark" class="section">
+  <div class="section-title">🏆 Benchmark vs. Mercado de Helados</div>
+  <div class="section-sub">Nevería Roxy vs. categoría Helados & Nieves · Rappi MX · Mayo–Junio 2026 · 965 marcas activas</div>
+
+  <!-- Market share headline cards -->
+  <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:24px">
+    <div class="kpi-card amarillo">
+      <div class="kpi-label">Market Share Órdenes · Jun26</div>
+      <div class="kpi-value">0.68%</div>
+      <span class="kpi-delta neg">▼ vs 0.88% Abr26</span>
+      <div class="kpi-context">Top 12 de 965 marcas en ventas</div>
+    </div>
+    <div class="kpi-card amarillo">
+      <div class="kpi-label">Market Share Ventas · Jun26</div>
+      <div class="kpi-value">1.34%</div>
+      <span class="kpi-delta neg">▼ vs 1.86% Abr26</span>
+      <div class="kpi-context">Ticket alto sostiene share de ventas</div>
+    </div>
+    <div class="kpi-card verde">
+      <div class="kpi-label">CVR Roxy vs Mercado</div>
+      <div class="kpi-value">28.9%</div>
+      <span class="kpi-delta pos">▲ +14.4pp vs mercado</span>
+      <div class="kpi-context">Mercado promedio: 14.5% CVR</div>
+    </div>
+    <div class="kpi-card verde">
+      <div class="kpi-label">AOV Roxy vs Mercado</div>
+      <div class="kpi-value">$427</div>
+      <span class="kpi-delta pos">▲ +106% vs mercado</span>
+      <div class="kpi-context">Mercado promedio: $207 AOV</div>
+    </div>
+  </div>
+
+  <div class="success-box">
+    <span class="insight-icon">🥇</span>
+    <div class="insight-content">
+      <h4>Nevería Roxy tiene los mejores indicadores de calidad del mercado</h4>
+      <p>Con un CVR de 28.9% (mercado: 14.5%) y un AOV de $427 (mercado: $207), Roxy está en el <strong>top tier de eficiencia de conversión</strong> de toda la categoría de Helados & Nieves en Rappi. Es la #2 en CVR solo detrás de La Purísima (37.3%) y la <strong>#1 en AOV entre las marcas con más de 100 órdenes</strong>. El gap de volumen no es por falta de calidad — es por falta de alcance.</p>
+    </div>
+  </div>
+
+  <!-- Ranking competidores por órdenes -->
+  <div class="comp-table" style="margin-bottom:24px">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Marca</th>
+          <th>Órdenes May+Jun</th>
+          <th>Ventas May+Jun</th>
+          <th>CVR Prom.</th>
+          <th>AOV Prom.</th>
+          <th>Posición vs Roxy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#fff8f5">
+          <td><span class="rank-badge" style="background:#e5e7eb;color:#6b7280">–</span></td>
+          <td style="font-weight:700;color:#6b7280">Dairy Queen</td>
+          <td style="color:#6b7280">80,725</td>
+          <td style="color:#6b7280">$17,290,430</td>
+          <td style="color:#6b7280">n/d</td>
+          <td style="color:#6b7280">n/d</td>
+          <td style="font-size:11px;color:#6b7280">Liga diferente (cadena QSR global)</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-1">2</span></td>
+          <td style="font-weight:700">Nutrisa</td>
+          <td>6,218</td>
+          <td>$890,596</td>
+          <td>10.0%</td>
+          <td>$144</td>
+          <td style="font-size:11px;color:#6b7280">7.8x más órdenes, pero AOV 3x menor</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-2">3</span></td>
+          <td style="font-weight:700">Santa Clara</td>
+          <td>2,926</td>
+          <td>$924,383</td>
+          <td>8.9%</td>
+          <td>$314</td>
+          <td style="font-size:11px;color:#6b7280">3.7x órdenes, similar AOV tier</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-3">4</span></td>
+          <td style="font-weight:700">Dolce Natura</td>
+          <td>2,778</td>
+          <td>$805,228</td>
+          <td>18.3%</td>
+          <td>$288</td>
+          <td style="font-size:11px;color:#6b7280">CVR 10pp abajo de Roxy</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">5</span></td>
+          <td style="font-weight:700">Moyo</td>
+          <td>2,210</td>
+          <td>$412,859</td>
+          <td>10.0%</td>
+          <td>$187</td>
+          <td style="font-size:11px;color:#6b7280">Volumen alto, ticket bajo</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">6</span></td>
+          <td style="font-weight:700">Häagen Dazs</td>
+          <td>1,292</td>
+          <td>$447,128</td>
+          <td>9.4%</td>
+          <td>$345</td>
+          <td style="font-size:11px;color:#6b7280">Premium tier similar, 1.6x órdenes</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">7</span></td>
+          <td style="font-weight:700">La Purísima</td>
+          <td>1,232</td>
+          <td>$313,041</td>
+          <td>37.3%</td>
+          <td>$253</td>
+          <td style="font-size:11px;color:#6b7280">Mejor CVR del mercado, AOV menor</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">8</span></td>
+          <td style="font-weight:700">Neverías Frody</td>
+          <td>1,142</td>
+          <td>$235,039</td>
+          <td>13.6%</td>
+          <td>$202</td>
+          <td style="font-size:11px;color:#6b7280">Volumen moderado, baja calidad</td>
+        </tr>
+        <tr style="background:linear-gradient(90deg,#fff0dd,#fff8f0);border:2px solid #fed7aa">
+          <td><span class="rank-badge" style="background:linear-gradient(135deg,#fe663d,#ff3d55)">12</span></td>
+          <td style="font-weight:900;color:#c2410c">⭐ Nevería Roxy</td>
+          <td style="font-weight:900">793</td>
+          <td style="font-weight:900">$335,282</td>
+          <td style="font-weight:900;color:#16a34a">28.9% 🥇</td>
+          <td style="font-weight:900;color:#16a34a">$427 🥇</td>
+          <td style="font-size:11px;color:#c2410c">Top 2 CVR · Top 1 AOV (≥100 órd.)</td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-n">13</span></td>
+          <td style="font-weight:700">Ugurt</td>
+          <td>792</td>
+          <td>$206,994</td>
+          <td>28.6%</td>
+          <td>$262</td>
+          <td style="font-size:11px;color:#6b7280">CVR casi igual, AOV 39% menor</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CVR y AOV visual comparison -->
+  <div class="chart-row">
+    <div class="chart-box">
+      <div class="chart-title">CVR: Nevería Roxy vs Competidores</div>
+      <div class="chart-sub">Promedio May–Jun 2026 · Mercado avg = 14.5%</div>
+      <div class="bar-chart" style="margin-top:12px">
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">La Purísima</span><div class="bar-track"><div class="bar-fill green" style="width:100%">37.3%</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px;color:#fe663d;font-weight:900">🌟 Roxy</span><div class="bar-track"><div class="bar-fill gradient" style="width:77.5%">28.9%</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">Ugurt</span><div class="bar-track"><div class="bar-fill teal" style="width:76.7%">28.6%</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">Carmela</span><div class="bar-track"><div class="bar-fill teal" style="width:73%">27.2%</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">Dolce Natura</span><div class="bar-track"><div class="bar-fill gray" style="width:49%">18.3%</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">📊 Mercado</span><div class="bar-track"><div class="bar-fill gray" style="width:38.8%;background:#94a3b8">14.5%</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">Moyo</span><div class="bar-track"><div class="bar-fill gray" style="width:26.8%">10.0%</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">Santa Clara</span><div class="bar-track"><div class="bar-fill gray" style="width:23.9%">8.9%</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">Häagen Dazs</span><div class="bar-track"><div class="bar-fill gray" style="width:25.2%">9.4%</div></div></div>
+      </div>
+    </div>
+
+    <div class="chart-box">
+      <div class="chart-title">AOV: Nevería Roxy vs Competidores</div>
+      <div class="chart-sub">Promedio May–Jun 2026 · Mercado avg = $207</div>
+      <div class="bar-chart" style="margin-top:12px">
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px;color:#fe663d;font-weight:900">🌟 Roxy</span><div class="bar-track"><div class="bar-fill gradient" style="width:100%">$427</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">Häagen Dazs</span><div class="bar-track"><div class="bar-fill teal" style="width:80.8%">$345</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">Santa Clara</span><div class="bar-track"><div class="bar-fill teal" style="width:73.5%">$314</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">Dolce Natura</span><div class="bar-track"><div class="bar-fill gray" style="width:67.4%">$288</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">La Purísima</span><div class="bar-track"><div class="bar-fill gray" style="width:59.3%">$253</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">📊 Mercado</span><div class="bar-track"><div class="bar-fill gray" style="width:48.5%;background:#94a3b8">$207</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">Moyo</span><div class="bar-track"><div class="bar-fill gray" style="width:43.6%">$187</div></div></div>
+        <div class="bar-row"><span class="bar-label" style="width:90px;font-size:10px">Nutrisa</span><div class="bar-track"><div class="bar-fill gray" style="width:33.7%">$144</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekly orders trend vs competitors -->
+  <div class="chart-box full" style="margin-top:4px">
+    <div class="chart-title">Tendencia Semanal de Órdenes — Roxy vs Competidores Clave</div>
+    <div class="chart-sub">Semanas Abr 27 – Jun 22, 2026 (excluye Dairy Queen por escala)</div>
+    <div style="overflow-x:auto;margin-top:16px">
+      <svg width="100%" viewBox="0 0 760 260" style="min-width:580px">
+        <!-- Grid -->
+        <line x1="60" y1="20" x2="740" y2="20" stroke="#f0f0f0" stroke-width="1"/>
+        <line x1="60" y1="70" x2="740" y2="70" stroke="#f0f0f0" stroke-width="1"/>
+        <line x1="60" y1="120" x2="740" y2="120" stroke="#f0f0f0" stroke-width="1"/>
+        <line x1="60" y1="170" x2="740" y2="170" stroke="#f0f0f0" stroke-width="1"/>
+        <line x1="60" y1="210" x2="740" y2="210" stroke="#f0f0f0" stroke-width="1"/>
+
+        <!-- Y axis labels -->
+        <text x="55" y="24" font-size="9" fill="#9ca3af" text-anchor="end">450</text>
+        <text x="55" y="74" font-size="9" fill="#9ca3af" text-anchor="end">350</text>
+        <text x="55" y="124" font-size="9" fill="#9ca3af" text-anchor="end">250</text>
+        <text x="55" y="174" font-size="9" fill="#9ca3af" text-anchor="end">150</text>
+        <text x="55" y="214" font-size="9" fill="#9ca3af" text-anchor="end">50</text>
+
+        <!-- X positions: 9 weeks, spaced evenly from x=80 to x=720 -->
+        <!-- Scale: max ~450 orders, y = 210 - (orders/450)*190 -->
+
+        <!-- Dolce Natura: 197,310,312,411,406,406,376,447,110 -->
+        <polyline points="80,168 160,88 240,87 320,37 400,38 480,38 560,52 640,23 720,164"
+          fill="none" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="4,2" opacity="0.7"/>
+
+        <!-- Moyo: 141,336,253,241,275,269,372,305,159 -->
+        <polyline points="80,151 160,68 240,103 320,108 400,94 480,96 560,42 640,81 720,144"
+          fill="none" stroke="#0ea5e9" stroke-width="2" stroke-dasharray="4,2" opacity="0.7"/>
+
+        <!-- Häagen Dazs: 108,185,148,149,163,150,171,251,75 -->
+        <polyline points="80,164 160,132 240,148 320,148 400,144 480,147 560,140 640,96 720,178"
+          fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.6"/>
+
+        <!-- La Purisima: 103,192,173,177,154,154,180,150,52 -->
+        <polyline points="80,166 160,129 240,137 320,136 400,145 480,145 560,134 640,147 720,188"
+          fill="none" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.6"/>
+
+        <!-- ROXY (highlighted): 69,113,117,110,102,106,117,101,27 -->
+        <polyline points="80,181 160,163 240,161 320,165 400,167 480,166 560,161 640,167 720,199"
+          fill="none" stroke="#fe663d" stroke-width="3.5"/>
+        <!-- Dots for Roxy -->
+        <circle cx="80" cy="181" r="5" fill="#fe663d"/>
+        <circle cx="160" cy="163" r="5" fill="#fe663d"/>
+        <circle cx="240" cy="161" r="5" fill="#fe663d"/>
+        <circle cx="320" cy="165" r="5" fill="#fe663d"/>
+        <circle cx="400" cy="167" r="5" fill="#fe663d"/>
+        <circle cx="480" cy="166" r="5" fill="#fe663d"/>
+        <circle cx="560" cy="161" r="5" fill="#fe663d"/>
+        <circle cx="640" cy="167" r="5" fill="#fe663d"/>
+        <circle cx="720" cy="199" r="5" fill="#fe663d"/>
+
+        <!-- Value labels Roxy -->
+        <text x="80" y="176" font-size="9" fill="#fe663d" text-anchor="middle" font-weight="bold">69</text>
+        <text x="160" y="158" font-size="9" fill="#fe663d" text-anchor="middle" font-weight="bold">113</text>
+        <text x="240" y="156" font-size="9" fill="#fe663d" text-anchor="middle" font-weight="bold">117</text>
+        <text x="320" y="160" font-size="9" fill="#fe663d" text-anchor="middle" font-weight="bold">110</text>
+        <text x="400" y="162" font-size="9" fill="#fe663d" text-anchor="middle" font-weight="bold">102</text>
+        <text x="480" y="161" font-size="9" fill="#fe663d" text-anchor="middle" font-weight="bold">106</text>
+        <text x="560" y="156" font-size="9" fill="#fe663d" text-anchor="middle" font-weight="bold">117</text>
+        <text x="640" y="162" font-size="9" fill="#fe663d" text-anchor="middle" font-weight="bold">101</text>
+        <text x="720" y="194" font-size="9" fill="#fe663d" text-anchor="middle" font-weight="bold">27</text>
+
+        <!-- X labels -->
+        <text x="80" y="230" font-size="9" fill="#6b7280" text-anchor="middle">A27</text>
+        <text x="160" y="230" font-size="9" fill="#6b7280" text-anchor="middle">M04</text>
+        <text x="240" y="230" font-size="9" fill="#6b7280" text-anchor="middle">M11</text>
+        <text x="320" y="230" font-size="9" fill="#6b7280" text-anchor="middle">M18</text>
+        <text x="400" y="230" font-size="9" fill="#6b7280" text-anchor="middle">M25</text>
+        <text x="480" y="230" font-size="9" fill="#6b7280" text-anchor="middle">J01</text>
+        <text x="560" y="230" font-size="9" fill="#6b7280" text-anchor="middle">J08</text>
+        <text x="640" y="230" font-size="9" fill="#6b7280" text-anchor="middle">J15</text>
+        <text x="720" y="230" font-size="9" fill="#6b7280" text-anchor="middle">J22*</text>
+        <text x="720" y="242" font-size="8" fill="#9ca3af" text-anchor="middle">parcial</text>
+
+        <!-- Legend -->
+        <line x1="65" y1="252" x2="85" y2="252" stroke="#fe663d" stroke-width="3"/>
+        <circle cx="75" cy="252" r="3" fill="#fe663d"/>
+        <text x="88" y="256" font-size="9" fill="#fe663d" font-weight="bold">Nevería Roxy</text>
+
+        <line x1="165" y1="252" x2="185" y2="252" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="4,2"/>
+        <text x="188" y="256" font-size="9" fill="#8b5cf6">Dolce Natura</text>
+
+        <line x1="265" y1="252" x2="285" y2="252" stroke="#0ea5e9" stroke-width="2" stroke-dasharray="4,2"/>
+        <text x="288" y="256" font-size="9" fill="#0ea5e9">Moyo</text>
+
+        <line x1="340" y1="252" x2="360" y2="252" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3"/>
+        <text x="363" y="256" font-size="9" fill="#f59e0b">Häagen Dazs</text>
+
+        <line x1="430" y1="252" x2="450" y2="252" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="3,3"/>
+        <text x="453" y="256" font-size="9" fill="#16a34a">La Purísima</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- CVR weekly: Roxy vs Market -->
+  <div class="chart-box full" style="margin-top:20px">
+    <div class="chart-title">CVR Semanal: Roxy vs Promedio de Mercado</div>
+    <div class="chart-sub">Roxy convierte 2x más que el mercado — consistentemente todas las semanas</div>
+    <div style="overflow-x:auto;margin-top:16px">
+      <svg width="100%" viewBox="0 0 760 200" style="min-width:580px">
+        <!-- Grid -->
+        <line x1="60" y1="20" x2="740" y2="20" stroke="#f0f0f0"/>
+        <line x1="60" y1="60" x2="740" y2="60" stroke="#f0f0f0"/>
+        <line x1="60" y1="100" x2="740" y2="100" stroke="#f0f0f0"/>
+        <line x1="60" y1="140" x2="740" y2="140" stroke="#f0f0f0"/>
+        <!-- Y labels (max 40%) -->
+        <text x="55" y="24" font-size="9" fill="#9ca3af" text-anchor="end">40%</text>
+        <text x="55" y="64" font-size="9" fill="#9ca3af" text-anchor="end">30%</text>
+        <text x="55" y="104" font-size="9" fill="#9ca3af" text-anchor="end">20%</text>
+        <text x="55" y="144" font-size="9" fill="#9ca3af" text-anchor="end">10%</text>
+
+        <!-- Scale: y = 140 - (cvr/40)*120 -->
+        <!-- Roxy CVR weekly: 23.4,23.5,24.8,22.0,23.3,25.2,20.1,22.5,30.6 -->
+        <polyline points="80,70 160,70 240,66 320,74 400,70 480,65 560,80 640,73 720,48"
+          fill="none" stroke="#fe663d" stroke-width="3"/>
+        <circle cx="80" cy="70" r="4" fill="#fe663d"/>
+        <circle cx="160" cy="70" r="4" fill="#fe663d"/>
+        <circle cx="240" cy="66" r="4" fill="#fe663d"/>
+        <circle cx="320" cy="74" r="4" fill="#fe663d"/>
+        <circle cx="400" cy="70" r="4" fill="#fe663d"/>
+        <circle cx="480" cy="65" r="4" fill="#fe663d"/>
+        <circle cx="560" cy="80" r="4" fill="#fe663d"/>
+        <circle cx="640" cy="73" r="4" fill="#fe663d"/>
+        <circle cx="720" cy="48" r="4" fill="#fe663d"/>
+
+        <!-- Market CVR: 8.7,7.5,7.9,7.7,7.6,8.4,7.9,7.4,7.7 -->
+        <polyline points="80,114 160,117 240,116 320,117 400,117 480,115 560,116 640,118 720,117"
+          fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,3"/>
+        <circle cx="80" cy="114" r="3" fill="#94a3b8"/>
+        <circle cx="160" cy="117" r="3" fill="#94a3b8"/>
+        <circle cx="240" cy="116" r="3" fill="#94a3b8"/>
+        <circle cx="320" cy="117" r="3" fill="#94a3b8"/>
+        <circle cx="400" cy="117" r="3" fill="#94a3b8"/>
+        <circle cx="480" cy="115" r="3" fill="#94a3b8"/>
+        <circle cx="560" cy="116" r="3" fill="#94a3b8"/>
+        <circle cx="640" cy="118" r="3" fill="#94a3b8"/>
+        <circle cx="720" cy="117" r="3" fill="#94a3b8"/>
+
+        <!-- Gap fill -->
+        <polygon points="80,70 160,70 240,66 320,74 400,70 480,65 560,80 640,73 720,48 720,117 640,118 560,116 480,115 400,117 320,117 240,116 160,117 80,114"
+          fill="#fe663d" opacity="0.07"/>
+
+        <!-- X labels -->
+        <text x="80" y="170" font-size="9" fill="#6b7280" text-anchor="middle">A27</text>
+        <text x="160" y="170" font-size="9" fill="#6b7280" text-anchor="middle">M04</text>
+        <text x="240" y="170" font-size="9" fill="#6b7280" text-anchor="middle">M11</text>
+        <text x="320" y="170" font-size="9" fill="#6b7280" text-anchor="middle">M18</text>
+        <text x="400" y="170" font-size="9" fill="#6b7280" text-anchor="middle">M25</text>
+        <text x="480" y="170" font-size="9" fill="#6b7280" text-anchor="middle">J01</text>
+        <text x="560" y="170" font-size="9" fill="#6b7280" text-anchor="middle">J08</text>
+        <text x="640" y="170" font-size="9" fill="#6b7280" text-anchor="middle">J15</text>
+        <text x="720" y="170" font-size="9" fill="#6b7280" text-anchor="middle">J22</text>
+
+        <!-- Legend -->
+        <line x1="65" y1="190" x2="85" y2="190" stroke="#fe663d" stroke-width="3"/>
+        <text x="88" y="194" font-size="9" fill="#fe663d" font-weight="bold">Nevería Roxy CVR</text>
+        <line x1="220" y1="190" x2="240" y2="190" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="243" y="194" font-size="9" fill="#94a3b8">Promedio Mercado CVR</text>
+
+        <!-- Gap label -->
+        <text x="400" y="92" font-size="9" fill="#fe663d" text-anchor="middle" font-weight="bold">GAP: ~2x el mercado</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Oportunidad de mercado -->
+  <div class="insight-box" style="margin-top:20px">
+    <span class="insight-icon">🎯</span>
+    <div class="insight-content">
+      <h4>La oportunidad en números: recuperar share de tráfico</h4>
+      <p>El mercado de Helados & Nieves en Rappi procesó <strong>~60,000 órdenes en Junio</strong>. Roxy capturó solo 405 (0.68%). Si Roxy llegara al <strong>1% de market share</strong> — que tuvo más cerca en Abril 2026 — serían ~600 órdenes solo en las semanas del mercado. Con la CVR y AOV actuales, eso representa ~$256K de ventas adicionales en el mes. El benchmark de Dolce Natura (2,778 órdenes en May+Jun) muestra que <strong>marcas con menos CVR y menos AOV que Roxy generan 3.5x más volumen</strong> — la diferencia está en alcance y visibilidad en plataforma.</p>
+    </div>
+  </div>
+
+  <!-- Resumen posicionamiento -->
+  <div style="background:linear-gradient(135deg,#1a1a1a,#2d2d2d);border-radius:16px;padding:28px;margin-top:20px;color:white">
+    <div style="font-size:16px;font-weight:900;margin-bottom:20px;background:linear-gradient(135deg,#fe663d,#ff3d55);-webkit-background-clip:text;-webkit-text-fill-color:transparent">
+      📊 Posicionamiento de Nevería Roxy en el Mercado
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px">
+      <div style="text-align:center">
+        <div style="font-size:11px;opacity:0.6;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Ranking por Ventas</div>
+        <div style="font-size:42px;font-weight:900;background:linear-gradient(135deg,#fe663d,#ff3d55);-webkit-background-clip:text;-webkit-text-fill-color:transparent">#8</div>
+        <div style="font-size:12px;opacity:0.7">de 965 marcas activas</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:11px;opacity:0.6;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Ranking CVR</div>
+        <div style="font-size:42px;font-weight:900;background:linear-gradient(135deg,#fe663d,#ff3d55);-webkit-background-clip:text;-webkit-text-fill-color:transparent">#2</div>
+        <div style="font-size:12px;opacity:0.7">mejor conversión del mercado</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:11px;opacity:0.6;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">AOV vs Mercado</div>
+        <div style="font-size:42px;font-weight:900;background:linear-gradient(135deg,#fe663d,#ff3d55);-webkit-background-clip:text;-webkit-text-fill-color:transparent">2x</div>
+        <div style="font-size:12px;opacity:0.7">$427 vs $207 promedio</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:11px;opacity:0.6;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Gap de Tráfico</div>
+        <div style="font-size:42px;font-weight:900;color:#ff6b6b">0.35%</div>
+        <div style="font-size:12px;opacity:0.7">del mercado total — aquí está la palanca</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>🍦 Nevería Roxy × Rappi MX — Diagnóstico Comercial Junio 2026</span>
+  <span>Preparado para revisión interna · Datos: Ene 2025 – Jun 2026</span>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
